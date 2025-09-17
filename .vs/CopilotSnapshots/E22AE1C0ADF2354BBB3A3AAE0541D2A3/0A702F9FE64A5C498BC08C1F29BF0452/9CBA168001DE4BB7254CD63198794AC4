@@ -1,0 +1,11 @@
+﻿using System.Collections.Generic;
+
+public class PropertyInfo
+{
+    public string Name { get; set; }       // Property name
+    public string Type { get; set; }       // Property type (e.g., string, int, List<Order>)
+    public string Summary { get; set; }    // XML doc comment summary (if available)
+    public List<string> Modifiers { get; set; } // Modifiers like public, static, virtual
+    public string SourceCode { get; set; } // Full source code of the property
+
+}

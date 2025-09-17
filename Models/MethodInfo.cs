@@ -1,0 +1,21 @@
+using System.Collections.Generic;
+
+public class MethodInfo
+{
+    public string Name { get; set; }                  // Method name
+    public string Summary { get; set; }               // XML doc summary
+    public string Parameters { get; set; }            // Comma-separated parameter list
+    public string ReturnType { get; set; }            // Return type as string
+    public List<string> Calls { get; set; }           // List of method names this method calls
+    public List<string> SubscribesToEvents { get; set; } = new();
+    public List<string> RaisesEvents { get; set; } = new();
+    public float[] Embedding { get; set; }            // Embedding array
+
+    public List<string> Modifiers { get; set; } = new(); // Modifiers like public, static
+    public string SourceCode { get; set; }            // Full source code of the method
+
+    public MethodInfo()
+    {
+        Calls = new List<string>();
+    }
+}

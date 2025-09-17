@@ -1,0 +1,11 @@
+using System.Collections.Generic;
+
+public class ConstructorInfo
+{
+    public string Name { get; set; }           // Constructor name (usually same as class)
+    public string Summary { get; set; }        // XML doc comment summary
+    public string Parameters { get; set; }     // Comma-separated parameter list
+    public List<string> Modifiers { get; set; } = new(); // Modifiers like public, private
+    public string SourceCode { get; set; }     // Full source code of the constructor
+    public float[] Embedding { get; set; }
+}

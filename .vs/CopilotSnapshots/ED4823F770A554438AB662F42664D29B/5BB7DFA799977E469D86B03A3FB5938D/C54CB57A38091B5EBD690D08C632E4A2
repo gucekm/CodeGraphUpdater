@@ -1,0 +1,136 @@
+﻿using System.IO;
+using System.Threading.Tasks;
+using System;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Net.Http;
+
+class Program
+{
+    static async Task Main()
+    {
+        string repoPath = @"C:\Users\gucekm\source\repos\CodeGraphUpdater";
+        //var files = GitHelper.GetChangedFiles(repoPath);
+        var files = GetAllFiles(repoPath);
+        var parser = new RoslynParser();
+        var embeddingService = new OllamaEmbeddingService("http://localhost:11434", "huggingface.co/jinaai/jina-code-embeddings-1.5b-GGUF");
+        var writer = new Neo4jWriter("bolt://localhost:7687", "neo4j", "12345678", embeddingService);
+
+        // Ensure vector indexes exist before writing embeddings
+        await writer.CreateVectorIndexes();
+
+        foreach (var file in files.Where(f => f.EndsWith(".cs")))
+        {
+            var fullPath = Path.Combine(repoPath, file);
+            var code = File.ReadAllText(fullPath);
+
+            // Trim leading and trailing whitespace from each line
+            code = string.Join(
+                Environment.NewLine,
+                code.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None)
+                    .Select(line => line.Trim())
+            );
+
+            var tree = CSharpSyntaxTree.ParseText(code);
+            var root = tree.GetRoot();
+
+            var classes = parser.ParseClasses(root, file);
+            var interfaces = parser.ParseInterfaces(root);
+            await writer.WriteClasses(classes);
+            await writer.WriteInterfaces(interfaces);
+        }
+
+        Console.WriteLine("✅ Graph updated.");
+
+        // --- User Query Workflow ---
+        while (true)
+        {
+            Console.WriteLine("Enter your question about the codebase (or type 'exit' to quit):");
+            var userQuery = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(userQuery) || userQuery.Trim().ToLower() == "exit" || userQuery.Trim().ToLower() == "quit")
+                break;
+
+            if (userQuery.Trim().Equals("reset index", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Resetting Neo4j vector indexes...");
+                await writer.ResetVectorIndexes();
+                Console.WriteLine("Vector indexes have been reset.");
+                continue;
+            }
+
+            // 1. Generate embedding for user query
+            var userEmbeddingRaw = await embeddingService.GetEmbeddingAsync(userQuery);
+            var userEmbedding = OllamaEmbeddingService.NormalizeEmbedding(userEmbeddingRaw);
+
+            // 2. Query Neo4j for similar nodes
+            var similarNodes = await writer.QuerySimilarNodesAsync(userEmbedding, topN: 100);
+
+            // 3. Aggregate code info for answer generation
+            var contextText = string.Join("\n", similarNodes.Select(n => $"{n.Label}: {n.Name} (score: {n.Score:F3})"));
+
+            var requestPayload = new
+            {
+                messages = new[]
+                {
+                    new
+                    {
+                        role = "user",
+                        content = userQuery
+                    }
+                },
+                stream = false,
+                model = "mistral"
+            };
+
+            // 4. Generate answer with Ollama
+            var answer = await GenerateAnswerWithOllama(embeddingService, userQuery, contextText);
+
+            Console.WriteLine("\n--- Answer ---");
+            Console.WriteLine(answer);
+
+        }
+    }
+
+    // Helper to generate answer with Ollama using context
+    static async Task<string> GenerateAnswerWithOllama(OllamaEmbeddingService embeddingService, string question, string context)
+    {
+        // Compose prompt for Ollama
+        var prompt = $"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:";
+        Console.WriteLine(prompt);
+        var payload = new
+        {
+            messages = new[]
+            {
+            new { role = "user", content = prompt }
+        },
+            stream = false,
+            model = "mistral"
+        };
+
+        var httpClient = new HttpClient();
+        var requestUri = "http://localhost:11434/api/chat";
+        var json = System.Text.Json.JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync(requestUri, content);
+        response.EnsureSuccessStatusCode();
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        // Extract the answer from the response JSON
+        using var doc = System.Text.Json.JsonDocument.Parse(responseBody);
+        var answer = doc.RootElement.GetProperty("message").GetProperty("content").GetString();
+
+        return answer ?? string.Empty;
+
+
+    }
+
+    static string[] GetAllFiles(string repoPath)
+    {
+        // Recursively get all files in the repo directory
+        return Directory.GetFiles(repoPath, "*.*", SearchOption.AllDirectories);
+    }
+}

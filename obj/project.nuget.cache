@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "dOR/qDctYuk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\CodeGraphUpdater.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gucekm\\.nuget\\packages\\libgit2sharp\\0.27.0\\libgit2sharp.0.27.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\libgit2sharp.nativebinaries\\2.0.319\\libgit2sharp.nativebinaries.2.0.319.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.2\\microsoft.codeanalysis.analyzers.3.3.2.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\microsoft.codeanalysis.common\\4.0.1\\microsoft.codeanalysis.common.4.0.1.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\microsoft.codeanalysis.csharp\\4.0.1\\microsoft.codeanalysis.csharp.4.0.1.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\microsoft.netcore.platforms\\2.1.2\\microsoft.netcore.platforms.2.1.2.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\neo4j.driver\\5.12.0\\neo4j.driver.5.12.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.collections.immutable\\5.0.0\\system.collections.immutable.5.0.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.reflection.metadata\\5.0.0\\system.reflection.metadata.5.0.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.text.encoding.codepages\\4.5.1\\system.text.encoding.codepages.4.5.1.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
+    "C:\\Users\\gucekm\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

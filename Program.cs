@@ -1,0 +1,209 @@
+﻿using System.IO;
+using System.Threading.Tasks;
+using System;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Net.Http;
+
+class Program
+{
+    static async Task Main()
+    {
+        string repoPath = @"C:\Users\gucekm\source\repos\CodeGraphUpdater";
+        var parser = new RoslynParser();
+        var embeddingService = new OllamaEmbeddingService("http://localhost:11434", "huggingface.co/jinaai/jina-code-embeddings-1.5b-GGUF");
+        var writer = new Neo4jWriter("bolt://localhost:7687", "neo4j", "12345678", embeddingService);
+
+        // Configurable model for answer generation
+        string answerModel = "mistral";
+
+        // --- User Query Workflow ---
+        while (true)
+        {
+            Console.WriteLine("Enter your question about the codebase (or type 'exit' to quit):");
+            var userQuery = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(userQuery) || userQuery.Trim().ToLower() == "exit" || userQuery.Trim().ToLower() == "quit")
+                break;
+
+            // Allow user to set the answer model at runtime
+            if (userQuery.Trim().StartsWith("set model ", StringComparison.OrdinalIgnoreCase))
+            {
+                var parts = userQuery.Trim().Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 3)
+                {
+                    answerModel = parts[2];
+                    Console.WriteLine($"Answer model set to: {answerModel}");
+                }
+                else
+                {
+                    Console.WriteLine("Usage: set model <model_name>");
+                }
+                continue;
+            }
+
+            if (userQuery.Trim().Equals("reset index", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Resetting Neo4j vector indexes...");
+                await writer.ResetVectorIndexes();
+                Console.WriteLine("Vector indexes have been reset.");
+                continue;
+            }
+
+            if (userQuery.Trim().Equals("scan", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Scanning and updating graph...");
+                await ScanAndWriteGraph(repoPath, parser, embeddingService, writer);
+                Console.WriteLine("✅ Graph updated.");
+                continue;
+            }
+
+            // 1. Generate embedding for user query
+            var userEmbeddingRaw = await embeddingService.GetEmbeddingAsync(userQuery);
+            var userEmbedding = OllamaEmbeddingService.NormalizeEmbedding(userEmbeddingRaw);
+
+            // 2. Query Neo4j for similar nodes
+            var similarNodes = await writer.QuerySimilarNodesAsync(userEmbedding, topN: 100);
+
+            // 3. Aggregate code info for answer generation
+            //var contextText = string.Join("\n", similarNodes.Select(n => $"{n.Label}: {n.Name} (score: {n.Score:F3})"));
+            var similarities = string.Join("\n", similarNodes.Select(n => $"{n.Name}"));
+            Console.WriteLine("\n--- Similar Nodes ---");
+            Console.Write(similarities);
+
+            var contextText = string.Join("\n", similarNodes.Select(n => $"{n.Code}"));
+
+            // 4. Generate answer with Ollama (streaming, configurable model)
+            await GenerateAnswerWithOllamaStream(embeddingService, userQuery, contextText, answerModel);
+        }
+    }
+
+    // Extracted scan flow
+    static async Task ScanAndWriteGraph(
+        string repoPath,
+        RoslynParser parser,
+        OllamaEmbeddingService embeddingService,
+        Neo4jWriter writer)
+    {
+        var files = GetAllFiles(repoPath);
+        await writer.ResetVectorIndexes();
+
+        foreach (var file in files.Where(f => f.EndsWith(".cs")))
+        {
+            var fullPath = Path.Combine(repoPath, file);
+            var code = File.ReadAllText(fullPath);
+
+            // Trim leading and trailing whitespace from each line
+            code = string.Join(
+                Environment.NewLine,
+                code.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None)
+                    .Select(line => line.Trim())
+            );
+
+            var tree = CSharpSyntaxTree.ParseText(code);
+            var root = tree.GetRoot();
+
+            var classes = parser.ParseClasses(root, file);
+            var interfaces = parser.ParseInterfaces(root);
+            await writer.WriteClasses(classes);
+            await writer.WriteInterfaces(interfaces);
+        }
+    }
+
+    // Helper to generate answer with Ollama using context
+    static async Task<string> GenerateAnswerWithOllama(OllamaEmbeddingService embeddingService, string question, string context)
+    {
+        // Compose prompt for Ollama
+        var prompt = $"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:";
+        Console.WriteLine(prompt);
+        var payload = new
+        {
+            messages = new[]
+            {
+            new { role = "user", content = prompt }
+        },
+            stream = false,
+            model = "mistral"
+        };
+
+        var httpClient = new HttpClient();
+        var requestUri = "http://localhost:11434/api/chat";
+        var json = System.Text.Json.JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync(requestUri, content);
+        response.EnsureSuccessStatusCode();
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        // Extract the answer from the response JSON
+        using var doc = System.Text.Json.JsonDocument.Parse(responseBody);
+        var answer = doc.RootElement.GetProperty("message").GetProperty("content").GetString();
+
+        return answer ?? string.Empty;
+    }
+
+    // Helper to generate answer with Ollama using context (streaming version, configurable model)
+    static async Task GenerateAnswerWithOllamaStream(OllamaEmbeddingService embeddingService, string question, string context, string model)
+    {
+        // Compose prompt for Ollama
+        var prompt = $"Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:";
+        //Console.WriteLine(prompt);
+        var payload = new
+        {
+            messages = new[]
+            {
+                new { role = "user", content = prompt }
+            },
+            stream = true,
+            model = model
+        };
+
+        var httpClient = new HttpClient();
+        var requestUri = "http://localhost:11434/api/chat";
+        var json = System.Text.Json.JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        using var response = await httpClient.SendAsync(
+            new HttpRequestMessage(HttpMethod.Post, requestUri) { Content = content },
+            HttpCompletionOption.ResponseHeadersRead);
+
+        response.EnsureSuccessStatusCode();
+
+        using var stream = await response.Content.ReadAsStreamAsync();
+        using var reader = new StreamReader(stream);
+
+        Console.WriteLine("\n--- Answer ---");
+        while (!reader.EndOfStream)
+        {
+            var line = await reader.ReadLineAsync();
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            // Each line is a JSON object (Ollama streaming format)
+            try
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(line);
+                if (doc.RootElement.TryGetProperty("message", out var messageElem) &&
+                    messageElem.TryGetProperty("content", out var contentElem))
+                {
+                    var chunk = contentElem.GetString();
+                    if (!string.IsNullOrEmpty(chunk))
+                        Console.Write(chunk);
+                }
+            }
+            catch
+            {
+                // Ignore malformed lines
+            }
+        }
+        Console.WriteLine();
+    }
+
+    static string[] GetAllFiles(string repoPath)
+    {
+        // Recursively get all files in the repo directory
+        return Directory.GetFiles(repoPath, "*.*", SearchOption.AllDirectories);
+    }
+}

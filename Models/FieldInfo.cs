@@ -1,0 +1,11 @@
+using System.Collections.Generic;
+
+public class FieldInfo
+{
+    public string Name { get; set; }           // Field name
+    public string Type { get; set; }           // Field type (e.g., int, string, List<Order>)
+    public string Summary { get; set; }        // XML doc comment summary
+    public List<string> Modifiers { get; set; } = new(); // Modifiers like public, static, readonly
+    public string SourceCode { get; set; }     // Full source code of the field
+    public float[] Embedding { get; set; }     // Embedding property
+}

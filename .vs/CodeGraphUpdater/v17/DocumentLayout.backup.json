@@ -1,0 +1,315 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\OllamaEmbeddingService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:OllamaEmbeddingService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\neo4jwriter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:neo4jwriter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\constructorinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\constructorinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\eventinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\eventinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\classinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\classinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\methodinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\methodinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\propertyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\propertyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\models\\fieldinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:models\\fieldinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\githelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:githelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|c:\\users\\gucekm\\source\\repos\\codegraphupdater\\roslynparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A549C91-F61C-7900-AEF6-5B9A6532B1C4}|CodeGraphUpdater.csproj|solutionrelative:roslynparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 37,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:138:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:136:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:137:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:139:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:140:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:141:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:142:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:143:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:144:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:145:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:146:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:149:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:2:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PropertyInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\PropertyInfo.cs",
+              "RelativeDocumentMoniker": "Models\\PropertyInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\PropertyInfo.cs",
+              "RelativeToolTip": "Models\\PropertyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T14:17:02.648Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "OllamaEmbeddingService.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\OllamaEmbeddingService.cs",
+              "RelativeDocumentMoniker": "OllamaEmbeddingService.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\OllamaEmbeddingService.cs",
+              "RelativeToolTip": "OllamaEmbeddingService.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAYwAQAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T14:10:55.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "GitHelper.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\GitHelper.cs",
+              "RelativeDocumentMoniker": "GitHelper.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\GitHelper.cs",
+              "RelativeToolTip": "GitHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-14T11:01:40.178Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MethodInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\MethodInfo.cs",
+              "RelativeDocumentMoniker": "Models\\MethodInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\MethodInfo.cs",
+              "RelativeToolTip": "Models\\MethodInfo.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAA7wAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:07:08.557Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FieldInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\FieldInfo.cs",
+              "RelativeDocumentMoniker": "Models\\FieldInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\FieldInfo.cs",
+              "RelativeToolTip": "Models\\FieldInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:06:29.919Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EventInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\EventInfo.cs",
+              "RelativeDocumentMoniker": "Models\\EventInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\EventInfo.cs",
+              "RelativeToolTip": "Models\\EventInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:06:21.652Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Neo4jWriter.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Neo4jWriter.cs",
+              "RelativeDocumentMoniker": "Neo4jWriter.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Neo4jWriter.cs",
+              "RelativeToolTip": "Neo4jWriter.cs",
+              "ViewState": "AgIAAAUBAAAAAAAAAAAuwAwBAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:02:44.268Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "RoslynParser.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\RoslynParser.cs",
+              "RelativeDocumentMoniker": "RoslynParser.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\RoslynParser.cs",
+              "RelativeToolTip": "RoslynParser.cs",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAmwHsAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T17:37:41.176Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAJsAAAAAAAAAAAAWwKsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T17:19:41.399Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConstructorInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\ConstructorInfo.cs",
+              "RelativeDocumentMoniker": "Models\\ConstructorInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\ConstructorInfo.cs",
+              "RelativeToolTip": "Models\\ConstructorInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:06:09.232Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ClassInfo.cs",
+              "DocumentMoniker": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\ClassInfo.cs",
+              "RelativeDocumentMoniker": "Models\\ClassInfo.cs",
+              "ToolTip": "C:\\Users\\gucekm\\source\\repos\\CodeGraphUpdater\\Models\\ClassInfo.cs",
+              "RelativeToolTip": "Models\\ClassInfo.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAA1wBIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T18:05:27.978Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

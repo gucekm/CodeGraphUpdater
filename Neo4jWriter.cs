@@ -1,0 +1,300 @@
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Neo4j.Driver;
+using System;
+
+public class Neo4jWriter
+{
+    private readonly IDriver _driver;
+    private readonly OllamaEmbeddingService _embeddingService;
+
+    public Neo4jWriter(string uri, string user, string password, OllamaEmbeddingService embeddingService)
+    {
+        _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
+        _embeddingService = embeddingService;
+    }
+
+    // Call this once before writing embeddings to ensure vector index exists
+    public async Task CreateVectorIndexes()
+    {
+        using var session = _driver.AsyncSession();
+
+        // Neo4j 5.11+ vector index creation (adjust dimension as needed)
+        int embeddingDimension = 1536; // Change to your embedding size
+
+        var nodeTypes = new[] { "Class", "Method", "Property", "Field", "Event", "Constructor" };
+        foreach (var label in nodeTypes)
+        {
+            // Try to create the index, ignore error if it already exists
+            var cypher = $@"
+                CALL db.index.vector.createNodeIndex('{label}_embedding_index', '{label}', 'embedding', {embeddingDimension}, 'COSINE')
+            ";
+            try
+            {
+                await session.RunAsync(cypher);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Vector index creation error for label '{label}': {ex.Message}");
+                // Ignore errors (e.g., index already exists)
+            }
+                
+        }
+    }
+
+    // ...existing code...
+
+    /// <summary>
+    /// Drops all vector indexes for supported node types (Class, Method, Property, Field, Event, Constructor).
+    /// </summary>
+    public async Task DropVectorIndexes()
+    {
+        using var session = _driver.AsyncSession();
+
+        var nodeTypes = new[] { "Class", "Method", "Property", "Field", "Event", "Constructor" };
+        foreach (var label in nodeTypes)
+        {
+            var indexName = $"{label}_embedding_index";
+            var cypher = $"DROP INDEX {indexName}";
+            try
+            {
+                await session.RunAsync(cypher);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Vector index drop error for label '{label}': {ex.Message}");
+                // Ignore errors (e.g., index does not exist)
+            }
+        }
+    }
+
+    /// <summary>
+    /// Drops all vector indexes and then recreates them for supported node types.
+    /// </summary>
+    public async Task ResetVectorIndexes()
+    {
+        await DropVectorIndexes();
+        await CreateVectorIndexes();
+    }
+
+    public async Task WriteClasses(List<ClassInfo> classes)
+    {
+        using var session = _driver.AsyncSession();
+
+        foreach (var cls in classes)
+        {
+            // Generate and normalize embedding for class source code
+            var classEmbeddingRaw = cls.SourceCode != null
+                ? await _embeddingService.GetEmbeddingAsync(cls.SourceCode)
+                : null;
+            var classEmbedding = OllamaEmbeddingService.NormalizeEmbedding(classEmbeddingRaw);
+
+            await session.ExecuteWriteAsync(async tx =>
+            {
+                // Class node
+                await tx.RunAsync(
+                    "MERGE (c:Class {name: $name}) SET c.filePath = $path, c.summary = $summary, c.embedding = $embedding",
+                    new
+                    {
+                        name = cls.Name,
+                        path = cls.FilePath,
+                        summary = cls.Summary ?? "",
+                        embedding = classEmbedding != null ? string.Join(",", classEmbedding) : ""
+                    });
+
+                // INHERITS
+                if (!string.IsNullOrEmpty(cls.BaseType))
+                {
+                    await tx.RunAsync("MERGE (b:Class {name: $base})", new { baseType = cls.BaseType });
+                    await tx.RunAsync("MATCH (c:Class {name: $child}), (b:Class {name: $base}) " +
+                                      "MERGE (c)-[:INHERITS]->(b)",
+                        new { child = cls.Name, baseType = cls.BaseType });
+                }
+
+                // Methods
+                foreach (var method in cls.Methods)
+                {
+                    var methodEmbeddingRaw = method.SourceCode != null
+                        ? await _embeddingService.GetEmbeddingAsync(method.SourceCode)
+                        : null;
+                    var methodEmbedding = OllamaEmbeddingService.NormalizeEmbedding(methodEmbeddingRaw);
+
+                    await tx.RunAsync(
+                        "MERGE (m:Method {name: $name}) " +
+                        "SET m.summary = $summary, m.parameters = $parameters, m.returnType = $returnType, m.sourceCode = $sourceCode, m.embedding = $embedding",
+                        new
+                        {
+                            name = method.Name,
+                            summary = method.Summary ?? "",
+                            parameters = method.Parameters,
+                            returnType = method.ReturnType,
+                            sourceCode = method.SourceCode,
+                            embedding = methodEmbedding,
+                            //embedding = methodEmbedding != null ? string.Join(",", methodEmbedding) : ""
+                        });
+
+                    await tx.RunAsync("MATCH (c:Class {name: $class}), (m:Method {name: $method}) " +
+                                      "MERGE (c)-[:CONTAINS]->(m)",
+                        new { @class = cls.Name, method = method.Name });
+
+                    foreach (var call in method.Calls)
+                    {
+                        await tx.RunAsync("MERGE (target:Method {name: $called})", new { called = call });
+                        await tx.RunAsync("MATCH (source:Method {name: $source}), (target:Method {name: $called}) " +
+                                          "MERGE (source)-[:CALLS]->(target)",
+                            new { source = method.Name, called = call });
+                    }
+
+                    foreach (var evt in method.SubscribesToEvents)
+                    {
+                        await tx.RunAsync("MERGE (e:Event {name: $name})", new { name = evt });
+                        await tx.RunAsync("MATCH (m:Method {name: $method}), (e:Event {name: $name}) " +
+                                          "MERGE (m)-[:SUBSCRIBES_TO]->(e)",
+                            new { method = method.Name, name = evt });
+                    }
+
+                    foreach (var evt in method.RaisesEvents)
+                    {
+                        await tx.RunAsync("MERGE (e:Event {name: $name})", new { name = evt });
+                        await tx.RunAsync("MATCH (m:Method {name: $method}), (e:Event {name: $name}) " +
+                                          "MERGE (m)-[:RAISES]->(e)",
+                            new { method = method.Name, name = evt });
+                    }
+                }
+
+                // Properties
+                foreach (var prop in cls.Properties)
+                {
+                    var propEmbeddingRaw = prop.SourceCode != null
+                        ? await _embeddingService.GetEmbeddingAsync(prop.SourceCode)
+                        : null;
+                    var propEmbedding = OllamaEmbeddingService.NormalizeEmbedding(propEmbeddingRaw);
+
+                    await tx.RunAsync(
+                        "MERGE (p:Property {name: $name}) " +
+                        "SET p.type = $type, p.summary = $summary, p.modifiers = $modifiers, p.sourceCode = $sourceCode, p.embedding = $embedding",
+                        new
+                        {
+                            name = prop.Name,
+                            type = prop.Type,
+                            summary = prop.Summary ?? "",
+                            modifiers = string.Join(" ", prop.Modifiers),
+                            sourceCode = prop.SourceCode,
+                            embedding = propEmbedding != null ? string.Join(",", propEmbedding) : ""
+                        });
+
+                    await tx.RunAsync("MATCH (c:Class {name: $class}), (p:Property {name: $name}) " +
+                                      "MERGE (c)-[:HAS_PROPERTY]->(p)",
+                        new { @class = cls.Name, name = prop.Name });
+                }
+
+                // Events
+                foreach (var evt in cls.Events)
+                {
+                    var eventEmbeddingRaw = evt.SourceCode != null
+                        ? await _embeddingService.GetEmbeddingAsync(evt.SourceCode)
+                        : null;
+                    var eventEmbedding = OllamaEmbeddingService.NormalizeEmbedding(eventEmbeddingRaw);
+
+                    await tx.RunAsync(
+                        "MERGE (e:Event {name: $name}) " +
+                        "SET e.type = $type, e.summary = $summary, e.sourceCode = $sourceCode, e.embedding = $embedding",
+                        new
+                        {
+                            name = evt.Name,
+                            type = evt.Type,
+                            summary = evt.Summary ?? "",
+                            sourceCode = evt.SourceCode,
+                            embedding = eventEmbedding != null ? string.Join(",", eventEmbedding) : ""
+                        });
+
+                    await tx.RunAsync("MATCH (c:Class {name: $class}), (e:Event {name: $name}) " +
+                                      "MERGE (c)-[:HAS_EVENT]->(e)",
+                        new { @class = cls.Name, name = evt.Name });
+                }
+
+                // Fields
+                foreach (var field in cls.Fields)
+                {
+                    await tx.RunAsync("MERGE (f:Field {name: $name}) " +
+                                      "SET f.type = $type, f.summary = $summary, f.modifiers = $modifiers",
+                        new
+                        {
+                            name = field.Name,
+                            type = field.Type,
+                            summary = field.Summary ?? "",
+                            modifiers = string.Join(" ", field.Modifiers)
+                        });
+
+                    await tx.RunAsync("MATCH (c:Class {name: $class}), (f:Field {name: $name}) " +
+                                      "MERGE (c)-[:HAS_FIELD]->(f)",
+                        new { @class = cls.Name, name = field.Name });
+                }
+
+                // Constructors
+                foreach (var ctor in cls.Constructors)
+                {
+                    await tx.RunAsync("MERGE (ctor:Constructor {name: $name}) " +
+                                      "SET ctor.summary = $summary, ctor.parameters = $parameters, ctor.modifiers = $modifiers",
+                        new
+                        {
+                            name = ctor.Name,
+                            summary = ctor.Summary ?? "",
+                            parameters = ctor.Parameters,
+                            modifiers = string.Join(" ", ctor.Modifiers)
+                        });
+
+                    await tx.RunAsync("MATCH (c:Class {name: $class}), (ctor:Constructor {name: $name}) " +
+                                      "MERGE (c)-[:HAS_CONSTRUCTOR]->(ctor)",
+                        new { @class = cls.Name, name = ctor.Name });
+                }
+            });
+        }
+    }
+
+    public async Task WriteInterfaces(List<string> interfaces)
+    {
+        using var session = _driver.AsyncSession();
+        foreach (var name in interfaces)
+        {
+            await session.ExecuteWriteAsync(async tx =>
+            {
+                await tx.RunAsync("MERGE (i:Interface {name: $name})", new { name });
+            });
+        }
+    }
+
+    // Query Neo4j for top N similar nodes using a user embedding
+    public async Task<List<(string Label, string Name, string Code, float Score)>> QuerySimilarNodesAsync(float[] userEmbedding, int topN = 5)
+    {
+        var embeddingStr = "["+string.Join(",", userEmbedding)+"]";
+        var nodeTypes = new[] { "Class", "Method", "Property", "Field", "Event", "Constructor" };
+        var results = new List<(string Label, string Name, string Code, float Score)>();
+
+        using var session = _driver.AsyncSession();
+
+        foreach (var label in nodeTypes)
+        {
+            // Cypher for vector similarity search (Neo4j 5.11+)
+            var cypher = $@"
+                CALL db.index.vector.queryNodes('{label}_embedding_index', {topN}, $embedding) YIELD node, score
+                RETURN labels(node)[0] AS label, node.name AS name, node.sourceCode as code, score
+            ";
+
+            var cursor = await session.RunAsync(cypher, new { embedding = userEmbedding });
+            var records = await cursor.ToListAsync();
+            foreach (var record in records)
+            {
+                var lbl = record["label"].As<string>();
+                var name = record["name"].As<string>();
+                var score = record["score"].As<float>();
+                var code = record["code"].As<string>();
+                results.Add((lbl, name, code, score));
+            }
+        }
+
+        // Order by score descending and take topN overall
+        return results.OrderByDescending(r => r.Score).Take(topN).ToList();
+    }
+}
